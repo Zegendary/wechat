@@ -12,7 +12,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     { path: '/',
-      redirect: { name: 'Index' }
+      redirect: { name: 'Login' }
     },
     {
       path: '/index',
@@ -28,5 +28,6 @@ export default new Router({
     ...statisticsRouter,
     ...editAllPriceRouter,
     ...editPriceRouter,
-  ]
+  ],
+  mode: 'history'
 })

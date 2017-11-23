@@ -32,7 +32,9 @@
       MonthsByRooms
     },
     created(){
-      // ajax
+      this.$http.get('http://api.xcm168.com/api/bus/houses').then(({data})=>{
+        console.log(data)
+      })
     },
     mounted() {
       this.$nextTick(() => {

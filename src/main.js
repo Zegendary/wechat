@@ -3,13 +3,13 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import { Button, Collapse, CollapseItem, Icon } from 'element-ui'
+import axios from 'axios'
+import { Button, Collapse, CollapseItem, Icon, Message } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(Icon)
-
 Vue.config.productionTip = false
 Vue.directive('focus', {
   // 当绑定元素插入到 DOM 中。
@@ -18,6 +18,12 @@ Vue.directive('focus', {
     el.focus()
   }
 })
+
+axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`
+Vue.prototype.$http = axios
+
+Vue.prototype.$message = Message
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
