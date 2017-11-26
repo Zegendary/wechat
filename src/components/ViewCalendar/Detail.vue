@@ -13,8 +13,8 @@
       <li>五</li>
       <li>六</li>
     </ul>
-    <VCalendar :datePrice="datePrice" @selectDate="selectDate" :selectedDates="selectedDates"></VCalendar>
-    <VCalendar :datePrice="datePrice1" @selectDate="selectDate" :selectedDates="selectedDates"></VCalendar>
+    <VCalendar :year="year" :month="month" @selectDate="selectDate" :selectedDates="selectedDates"></VCalendar>
+    <VCalendar :year="nextYear" :month="nextMonth" @selectDate="selectDate" :selectedDates="selectedDates"></VCalendar>
     <div class="model" v-if="editPrice">
       <div class="input-wrapper">
         <p class="header">
@@ -22,9 +22,9 @@
           <i class="el-icon-close cancel" @click="cancelEdit"></i>
         </p>
         <ul class="input">
-          <li><span>日期:</span><span>{{selectedDates[0].date}}</span></li>
-          <li><span>预定:</span><input type="text" v-model="selectedDates[0].platform"></li>
-          <li><span>价格:</span><input type="number" v-model="selectedDates[0].price"></li>
+          <li><span>日期:</span><span>{{selectedDates[0].year}}年{{selectedDates[0].month}}月{{selectedDates[0].date.day}}日</span></li>
+          <li><span>预定:</span><input type="text" v-model="channel"></li>
+          <li><span>价格:</span><input type="number" v-model="price"></li>
           <li><button @click="confirm">确定</button></li>
         </ul>
       </div>
@@ -37,88 +37,34 @@
   export default{
     data(){
       return {
-        datePrice:{
-          year: 2017,
-          month: 11,
-          data:[
-            {date:'2017-11-1',price:1000,platform:"携程"},
-            {date:'2017-11-2',price:1000,platform:"携程"},
-            {date:'2017-11-3',price:1000,platform:"携程"},
-            {date:'2017-11-4',price:1000,platform:"携程"},
-            {date:'2017-11-5',price:1000,platform:"携程"},
-            {date:'2017-11-6',price:1000,platform:"携程"},
-            {date:'2017-11-7',price:1000,platform:"驴妈妈"},
-            {date:'2017-11-8',price:1000,platform:"携程"},
-            {date:'2017-11-9',price:1000,platform:"携程"},
-            {date:'2017-11-10',price:1000,platform:"携程"},
-            {date:'2017-11-11',price:1000,platform:"携程"},
-            {date:'2017-11-12',price:1000,platform:"携程"},
-            {date:'2017-11-13',price:1000,platform:"携程"},
-            {date:'2017-11-14',price:1000,platform:"携程"},
-            {date:'2017-11-15',price:1000,platform:"携程"},
-            {date:'2017-11-16',price:1000,platform:"携程"},
-            {date:'2017-11-17',price:1000,platform:""},
-            {date:'2017-11-18',price:1000,platform:""},
-            {date:'2017-11-19',price:1000,platform:""},
-            {date:'2017-11-20',price:1000,platform:""},
-            {date:'2017-11-21',price:1000,platform:"携程"},
-            {date:'2017-11-22',price:1000,platform:"携程"},
-            {date:'2017-11-23',price:1000,platform:"携程"},
-            {date:'2017-11-24',price:1000,platform:"携程"},
-            {date:'2017-11-25',price:1000,platform:"携程"},
-            {date:'2017-11-26',price:1000,platform:"携程"},
-            {date:'2017-11-27',price:1000,platform:"携程"},
-            {date:'2017-11-28',price:1000,platform:"携程"},
-            {date:'2017-11-29',price:1000,platform:"携程"},
-            {date:'2017-11-30',price:1000,platform:"携程"},
-          ]
-        },
-        datePrice1:{
-          year: 2017,
-          month: 12,
-          data:[
-            {date:'12-1',price:1000,platform:"携程"},
-            {date:'12-2',price:1000,platform:"携程"},
-            {date:'12-3',price:1000,platform:"携程"},
-            {date:'12-4',price:1000,platform:"携程"},
-            {date:'12-5',price:1000,platform:"携程"},
-            {date:'12-6',price:1000,platform:"携程"},
-            {date:'12-7',price:1000,platform:"驴妈妈"},
-            {date:'12-8',price:1000,platform:"携程"},
-            {date:'12-9',price:1000,platform:"携程"},
-            {date:'12-10',price:1000,platform:"携程"},
-            {date:'12-11',price:1000,platform:"携程"},
-            {date:'12-12',price:1000,platform:"携程"},
-            {date:'12-13',price:1000,platform:"携程"},
-            {date:'12-14',price:1000,platform:"携程"},
-            {date:'12-15',price:1000,platform:"携程"},
-            {date:'12-16',price:1000,platform:"携程"},
-            {date:'12-17',price:1000,platform:""},
-            {date:'12-18',price:1000,platform:""},
-            {date:'12-19',price:1000,platform:""},
-            {date:'12-20',price:1000,platform:""},
-            {date:'12-21',price:1000,platform:"携程"},
-            {date:'12-22',price:1000,platform:"携程"},
-            {date:'12-23',price:1000,platform:"携程"},
-            {date:'12-24',price:1000,platform:"携程"},
-            {date:'12-25',price:1000,platform:"携程"},
-            {date:'12-26',price:1000,platform:"携程"},
-            {date:'12-27',price:1000,platform:"携程"},
-            {date:'12-28',price:1000,platform:"携程"},
-            {date:'12-29',price:1000,platform:"携程"},
-            {date:'12-30',price:1000,platform:"携程"},
-            {date:'12-31',price:1000,platform:"携程"},
-          ]
-        },
+        year:'',
+        month:'',
+        nextYear:'',
+        nextMonth:'',
         selectedDates: [],
-        editPrice: false
+        editPrice: false,
+        channel: '',
+        price: ''
       }
+    },
+    created(){
+      let id = this.$route.query.id
+      let dateArr = this.$route.query.month.split('-');
+      this.year = dateArr[0]
+      this.month = dateArr[1]
+      if(dateArr[1] == 12){
+        dateArr[0] = +dateArr[0]+1
+        dateArr[1] = +dateArr[1]-12
+      }
+      this.nextYear = dateArr[0]
+      this.nextMonth = +dateArr[1]+1
     },
     components: {
       VCalendar
     },
     methods:{
       selectDate(val){
+        this.price = val.date.priceChange_day||val.date.priceChange_week||val.date.price
         this.selectedDates = [val]
         this.editPrice = true
       },
@@ -128,6 +74,13 @@
       cancelEdit(){
         this.editPrice = false
         this.selectedDates = []
+      },
+      confirm(){
+        this.$http.post(`http://api.xcm168.com/api/bus/house/calendar/close/${this.$route.query.id}`,{
+          day: `${this.selectedDates[0].year}-${this.selectedDates[0].month}-${this.selectedDates[0].date.day}`,
+          note: this.channel,
+          price: this.price
+        })
       }
     }
   }

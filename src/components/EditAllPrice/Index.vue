@@ -7,15 +7,12 @@
   import ChooseRoom from '../common/ChooseRoom.vue'
 
   export default{
-    created(){
-      // ajax
-    },
     components:{
       ChooseRoom
     },
     methods:{
-      pushRouter({room}){
-        this.$router.push({path:'/editAllPrice/edit',query: { room: room }})
+      pushRouter({homeId}){
+        this.$router.push({path:'/editAllPrice/edit',query: { homeId }})
       }
     }
   }

@@ -14,8 +14,8 @@
       ChooseRoom
     },
     methods:{
-      pushRouter({room}){
-        this.$router.push({path:'/editPrice/edit',query: { room: room }})
+      pushRouter({homeId}){
+        this.$router.push({path:'/editPrice/edit',query: { homeId }})
       }
     }
   }

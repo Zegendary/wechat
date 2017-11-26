@@ -5,9 +5,9 @@
         <p class="title"><span>{{item.month}}月</span><span class="price" v-show="price">¥{{item.price}}</span></p>
       </template>
       <ul>
-        <li v-for="child in item.children" @click="checkRoom(item.month,child.room)">
+        <li v-for="child in item.children" @click="checkRoom(item.month,child.id)">
           <p>
-            <span>{{child.room}}</span>
+            <span>{{child.name}}</span>
             <span class="price" v-show="price">¥{{child.price}}</span>
           </p>
           <i class="el-icon-arrow-right"></i>
@@ -20,8 +20,8 @@
   export default{
     props: ['roomsByMonths','price'],
     methods: {
-      checkRoom(month,room){
-        this.$emit('pushRouter',{ month: month,room: room })
+      checkRoom(month,id){
+        this.$emit('pushRouter',{ month: month,id: id })
       }
     }
   }

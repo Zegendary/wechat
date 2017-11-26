@@ -5,8 +5,8 @@
       <span class="text">顾白白农家乐详情</span>
     </header>
     <ul>
-      <li v-for="room in rooms" @click="$emit('pushRouter',{room: room})">
-        <span>{{room}}</span>
+      <li v-for="home in homes" @click="$emit('pushRouter',{homeId: home.id})">
+        <span>{{home.name}}</span>
         <i class="el-icon-arrow-right"></i>
       </li>
     </ul>
@@ -16,11 +16,13 @@
   export default{
     data(){
       return {
-        rooms: ["A栋","B栋","C栋"]
+        homes: []
       }
     },
     created(){
-      //ajax
+      this.$http.get('http://api.xcm168.com/api/bus/houses').then(({data})=>{
+        this.homes = data.data
+      })
     },
     methods:{
       goBack(){

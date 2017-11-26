@@ -9,8 +9,10 @@
         <span @click="homeFirst = true" :class="{active: homeFirst}">根据别墅查看</span>
         <span @click="homeFirst = false" :class="{active: !homeFirst}">根据日期查看</span>
       </div>
-      <rooms-by-months v-if="homeFirst" @pushRouter="pushRouter" :price="false" :rooms-by-months="roomsByMonths"></rooms-by-months>
-      <months-by-rooms v-if="!homeFirst" @pushRouter="pushRouter" :price="false" :months-by-rooms="monthsByRooms"></months-by-rooms>
+      <keep-alive>
+        <rooms-by-months v-if="homeFirst" @pushRouter="pushRouter" :price="false" :rooms-by-months="roomsByMonths"></rooms-by-months>
+        <months-by-rooms v-if="!homeFirst" @pushRouter="pushRouter" :price="false" :months-by-rooms="monthsByRooms"></months-by-rooms>
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -23,8 +25,11 @@
     data(){
       return {
         homeFirst: true,
-        rooms: ['A栋','B栋','C栋'],
-        price: false
+        price: false,
+        homes:[],
+        months:[],
+        roomsByMonths:[],
+        monthsByRooms:[]
       }
     },
     components:{
@@ -33,7 +38,8 @@
     },
     created(){
       this.$http.get('http://api.xcm168.com/api/bus/houses').then(({data})=>{
-        console.log(data)
+        this.homes = data.data
+        this.initData()
       })
     },
     mounted() {
@@ -45,24 +51,24 @@
       goBack(){
         this.$router.push({path:'/index'})
       },
-      pushRouter({month,room}){
-        this.$router.push({path:'/viewCalendar/detail',query: { month: month,room: room }})
-      }
-    },
-    computed:{
-      roomsByMonths(){
-        return [
-          {month:6,price: 6000,children:[{room:'A栋',price:1000},{room:'B栋',price:2000},{room:'C栋',price:3000}]},
-          {month:7,price: 9000,children:[{room:'A栋',price:2000},{room:'B栋',price:3000},{room:'C栋',price:4000}]},
-          {month:8,price: 6000,children:[{room:'A栋',price:3000},{room:'B栋',price:2000},{room:'C栋',price:1000}]},
-        ]
+      pushRouter({month,id}){
+        this.$router.push({path:'/viewCalendar/detail',query: { month: month,id: id }})
       },
-      monthsByRooms(){
-        return [
-          {room: 'A栋',price:30000,children:[{month:6,price:10000},{month:7,price:10000},{month:8,price:10000}]},
-          {room: 'B栋',price:30000,children:[{month:6,price:10000},{month:7,price:10000},{month:8,price:10000}]},
-          {room: 'C栋',price:30000,children:[{month:6,price:10000},{month:7,price:10000},{month:8,price:10000}]}
-        ]
+      initData(){
+        let month = new Date().getMonth()+1
+        let year = new Date().getFullYear()
+        for(let i = 0;i<4;i++){
+          if(month+i>12){
+            month = month - 12
+            year = year + 1
+          }
+          this.months.push({month:`${year}-${month+i}`})
+          this.roomsByMonths.push({month:`${year}-${month+i}`,children:this.homes})
+        }
+         this.homes.forEach((h)=>{
+          h.children = this.months
+        })
+        this.monthsByRooms = this.homes
       }
     }
   }

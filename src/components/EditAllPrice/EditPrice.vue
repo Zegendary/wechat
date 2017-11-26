@@ -2,7 +2,7 @@
   <div class="edit-all-price">
     <ul>
       <li cass="header"><span>星期</span><span> 售价</span></li>
-      <li v-for="(item,index) in prices" :key="index">
+      <li v-for="(item,index) in weekPrices" :key="index">
         <span>周{{week[index]}}</span>
         <span><input type="number" v-model="item.price" placeholder="售价"><span class="price">元</span></span>
       </li>
@@ -22,7 +22,7 @@
   export default{
     data(){
       return {
-        prices:[
+        weekPrices:[
           {price:''},
           {price:''},
           {price:''},
@@ -36,7 +36,17 @@
     },
     methods:{
       savePrice(){
-        //ajax
+        let weeks = []
+        let prices = []
+        this.weekPrices.forEach((p,i)=>{
+          if(p.price != 0){
+            weeks.push(i+1)
+            prices.push(p.price)
+          }
+        })
+        this.$http.post(`http://api.xcm168.com/api/bus/house/weekPrice/${this.$route.query.homeId}?week[]=${weeks.join('')}&price[]=${prices.join('')}`).then(()=>{
+          this.$message.success('更新成功')
+        })
       },
       previewCalendar(){
         this.$router.push({path: '/editPrice/edit',query:{room: this.$route.query.room}})
@@ -90,9 +100,6 @@
       }
       span.price{color: $silver}
       input{outline: none}
-      input[placeholder]{
-        color: $silver !important;
-      }
     }
     li:last-child,li:nth-last-child(2){span:first-child{color: $green}}
     .desctiption{

@@ -1,29 +1,29 @@
 <template>
   <div class="v-calendar">
-    <p class="month">{{datePrice.month}}月</p>
+    <p class="month">{{year}}年{{month}}月</p>
     <ul class="date-price">
-      <li @click="chooseDate(datePrice.data[0])" :style="{marginLeft: 100*prevMonthDays/7+'%'}"
-        :class="{past: datePrice.data[0].date<nowDate || datePrice.month < nowMonth,
-        today:datePrice.data[0].date == nowDate && datePrice.month == nowMonth,
-        later:(datePrice.data[0].date>nowDate && datePrice.month == nowMonth)||datePrice.month >= nowMonth,
-        blank: datePrice.data[0].platform == '',
-        selected: selectedDates.indexOf(datePrice.data[0])>-1}"
+      <li @click="chooseDate(list[0],year,month)" :style="{marginLeft: 100*prevMonthDays/7+'%'}"
+        :class="{past: (list[0].day<nowDate && month == nowMonth) || (month < nowMonth && year == nowYear),
+        today:list[0].day == nowDate && month == nowMonth,
+        later:(list[0].day>nowDate && month == nowMonth)||month > nowMonth||year>nowYear,
+        blank: list[0].channel == '',
+        selected: selected(list[0])>0}"
       >
-        <p class="date">{{datePrice.data[0].date.split('-')[2]}}</p>
-        <p class="platform">{{datePrice.data[0].platform|| '无'}}</p>
-        <p class="price">¥{{datePrice.data[0].price||0}}</p>
+        <p class="date">{{list[0].day}}</p>
+        <p class="channel">{{list[0].channel|| '无'}}</p>
+        <p class="price">¥{{list[0].price||0}}</p>
       </li>
-      <li v-for="(item,index) in datePrice.data"
-          @click="chooseDate(item)"
+      <li v-for="(item,index) in list"
+          @click="chooseDate(item,year,month)"
           v-if="index !==0" :class="{
-          past: item.date<nowDate || datePrice.month < nowMonth,
-        today:item.date == nowDate,
-        later:(item.date>nowDate && datePrice.month == nowMonth)||datePrice.month >= nowMonth,
-        blank: item.platform == '',
-        selected: selectedDates.indexOf(item)>-1}">
-        <p class="date">{{item.date.split('-')[2]}}</p>
-        <p class="platform">{{item.platform|| '无'}}</p>
-        <p class="price">¥{{item.price||0}}</p>
+          past: (item.day<nowDate && month == nowMonth) || (month < nowMonth && year == nowYear),
+        today:item.day == nowDate && month == nowMonth,
+        later:(item.day>nowDate && month == nowMonth)||month > nowMonth||year>nowYear,
+        blank: item.channel == '',
+        selected: selected(item)>0}">
+        <p class="date">{{item.day}}</p>
+        <p class="channel">{{item.channel|| '无'}}</p>
+        <p class="price">¥{{item.priceChange_day||item.priceChange_week||item.price}}</p>
       </li>
     </ul>
   </div>
@@ -38,19 +38,36 @@
     return date_one.getDay()
   }
   export default{
-    props:['datePrice','selectedDates'],
+    props:['year','month','selectedDates'],
     data(){
       return {
-        prevMonthDays: getMonthweek(this.datePrice.year,this.datePrice.month),
+        prevMonthDays: '',
+        list:[{
+          day:''
+        }],
         nowDate: mydate.getDate(),
-        nowMonth: mydate.getMonth() + 1
+        nowMonth: mydate.getMonth() + 1,
+        nowYear: mydate.getFullYear()
       }
     },
+    created(){
+      this.$http.get(`http://api.xcm168.com/api/house/calendar/${this.$route.query.id}?year=${this.year}&month=${this.month}`).then(({data})=>{
+        this.list = data[0].list
+        this.prevMonthDays = getMonthweek(this.year,this.month)
+      })
+    },
     methods:{
-      chooseDate(Date){
-        if (Date.platform == ''){
-          this.$emit('selectDate',Date)
+      chooseDate(date,year,month){
+        if (date.channel == ''){
+          if((date.day>=this.nowDate && month == this.nowMonth) || month > this.nowMonth || year > this.nowYear){
+            this.$emit('selectDate',{date,year,month})
+          }
         }
+      },
+      selected(val){
+        return this.selectedDates.filter((item)=>{
+          return item.year == this.year && item.month == this.month && item.date.day == val.day
+        }).length
       }
     }
   }
