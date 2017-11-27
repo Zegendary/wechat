@@ -19,6 +19,8 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+  let mydate = new Date();
+
   export default{
     data(){
       return {
@@ -31,25 +33,26 @@
           {price:''},
           {price:''}
         ],
-        week:["一", "二", "三", "四", "五", "六", "日"]
+        week:["一", "二", "三", "四", "五", "六", "日"],
+        month: mydate.getMonth() + 1,
+        year: mydate.getFullYear()
       }
     },
     methods:{
       savePrice(){
-        let weeks = []
-        let prices = []
+        let params = new URLSearchParams()
         this.weekPrices.forEach((p,i)=>{
           if(p.price != 0){
-            weeks.push(i+1)
-            prices.push(p.price)
+            params.append('week[]',i+1)
+            params.append('price[]',p.price)
           }
         })
-        this.$http.post(`http://api.xcm168.com/api/bus/house/weekPrice/${this.$route.query.homeId}?week[]=${weeks.join('')}&price[]=${prices.join('')}`).then(()=>{
+        this.$http.post(`http://api.xcm168.com/api/bus/house/weekPrice/${this.$route.query.homeId}`,params).then(()=>{
           this.$message.success('更新成功')
         })
       },
       previewCalendar(){
-        this.$router.push({path: '/editPrice/edit',query:{room: this.$route.query.room}})
+        this.$router.push({path: '/editPrice/edit',query:{id: this.$route.query.homeId,month:`${this.year}-${this.month}`}})
       }
     }
   }

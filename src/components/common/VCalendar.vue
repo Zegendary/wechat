@@ -11,7 +11,8 @@
       >
         <p class="date">{{list[0].day}}</p>
         <p class="channel">{{list[0].channel|| '无'}}</p>
-        <p class="price">¥{{list[0].price||0}}</p>
+        <p class="price" v-if="!list[0].state">¥{{list[0].priceChange_day||list[0].priceChange_week||list[0].price}}</p>
+        <p class="price">¥{{list[0].channel_price}}</p>
       </li>
       <li v-for="(item,index) in list"
           @click="chooseDate(item,year,month)"
@@ -23,7 +24,8 @@
         selected: selected(item)>0}">
         <p class="date">{{item.day}}</p>
         <p class="channel">{{item.channel|| '无'}}</p>
-        <p class="price">¥{{item.priceChange_day||item.priceChange_week||item.price}}</p>
+        <p class="price" v-if="!item.state">¥{{item.priceChange_day||item.priceChange_week||item.price}}</p>
+        <p class="price" v-else>¥{{item.channel_price}}</p>
       </li>
     </ul>
   </div>

@@ -5,17 +5,21 @@
 </template>
 <script type="text/ecmascript-6">
   import ChooseRoom from '../common/ChooseRoom.vue'
+  let mydate = new Date();
 
   export default{
-    created(){
-      // ajax
+    data(){
+      return {
+        month: mydate.getMonth() + 1,
+        year: mydate.getFullYear()
+      }
     },
     components:{
       ChooseRoom
     },
     methods:{
       pushRouter({homeId}){
-        this.$router.push({path:'/editPrice/edit',query: { homeId }})
+        this.$router.push({path:'/editPrice/edit',query: { id:homeId,month:`${this.year}-${this.month}` }})
       }
     }
   }
