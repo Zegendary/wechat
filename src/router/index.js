@@ -28,6 +28,5 @@ export default new Router({
     ...statisticsRouter,
     ...editAllPriceRouter,
     ...editPriceRouter,
-  ],
-  mode: 'history'
+  ]
 })
