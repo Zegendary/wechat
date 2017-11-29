@@ -39,6 +39,9 @@
         if(this.platforms.length == 0){
           return 0
         }
+        if(this.platforms.length == 1){
+          return this.platforms[0].price
+        }
         return this.platforms.reduce((a,b)=>a.price+b.price)
       }
     }
