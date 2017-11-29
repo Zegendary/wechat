@@ -2,7 +2,7 @@
   <el-collapse class="roomsByMonths">
     <el-collapse-item v-for="(item,index) in roomsByMonths" :key="index" :class="{green: price}">
       <template slot="title">
-        <p class="title"><span>{{item.month}}月</span><span class="price" v-show="price">¥{{item.price}}</span></p>
+        <p class="title"><span>{{item.month}}月</span><span class="price" v-show="price">¥{{allPrice || 0}}</span></p>
       </template>
       <ul>
         <li v-for="child in item.children" @click="checkRoom(item.month,child.id)">
@@ -22,6 +22,15 @@
     methods: {
       checkRoom(month,id){
         this.$emit('pushRouter',{ month: month,id: id })
+      }
+    },
+    computed:{
+      allPrice(){
+        if(this.roomsByMonths.children){
+          return this.roomsByMonths.children.reduce(a,b=>a.price+b.price)
+        } else{
+          return 0
+        }
       }
     }
   }

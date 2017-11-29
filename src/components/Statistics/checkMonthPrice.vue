@@ -26,19 +26,20 @@
   export default{
     data(){
       return {
-        platforms:[
-          {month: 6,plat: "携程",room:"A栋",price: 32140},
-          {month: 6,plat: "携程",room:"A栋",price: 32140},
-          {month: 6,plat: "携程",room:"A栋",price: 32140},
-        ]
+        platforms:[]
       }
     },
     created(){
-      //ajax
+      this.$http.get('http://api.xcm168.com/api/bus/stat/revenue/channel',{year:this.$route.query.year}).then(({data})=>{
+        this.platforms = data
+      })
     },
     methods:{
       allPrice(){
-        return this.platforms.map(x=>x.price).reduce((a,b)=>a+b)
+        if(this.platforms.length == 0){
+          return 0
+        }
+        return this.platforms.reduce((a,b)=>a.price+b.price)
       }
     }
   }

@@ -4,11 +4,11 @@
       <header>
         <div @click="getYear(-1)">
           <i class="el-icon-arrow-left"></i>
-          <span class="year">{{thisYear-1}}</span>
+          <span class="year">{{year-1}}</span>
         </div>
-        <div class="income" @click="checkoutYearIncome"><span>年收益</span><span class="cutline">|</span><span class="thisYear">{{thisYear}}</span></div>
+        <div class="income" @click="checkoutYearIncome"><span>年收益</span><span class="cutline">|</span><span class="thisYear">{{year}}</span></div>
         <div @click="getYear(1)">
-          <span class="year">{{thisYear+1}}</span>
+          <span class="year">{{year+1}}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
       </header>
@@ -30,9 +30,12 @@
     data(){
       return {
         homeFirst: true,
-        rooms: ['A栋','B栋','C栋'],
         price: false,
-        thisYear: new Date().getFullYear()
+        homes:[],
+        months:[],
+        year: new Date().getFullYear(),
+        roomsByMonths:[],
+        monthsByRooms:[]
       }
     },
     components:{
@@ -40,7 +43,7 @@
       MonthsByRooms
     },
     created(){
-      // ajax
+      this.fetchData()
     },
     mounted() {
       this.$nextTick(() => {
@@ -51,31 +54,35 @@
       goBack(){
         this.$router.go(-1)
       },
-      pushRouter({month,room}){
-        this.$router.push({path:'/statistics/month',query: { month: month,room: room }})
+      pushRouter({month,id}){
+        this.$router.push({path:'/statistics/month',query: { month: month,house_id: id,year: this.year }})
       },
       getYear(argu){
-        this.thisYear += argu
-        // ajax fetch year
+        this.year += argu
+        this.fetchData()
       },
       checkoutYearIncome(){
-        this.$router.push({path:'/statistics/year',query: { year: this.thisYear }})
-      }
-    },
-    computed:{
-      roomsByMonths(){
-        return [
-          {month:6,price: 6000,children:[{room:'A栋',price:1000},{room:'B栋',price:2000},{room:'C栋',price:3000}]},
-          {month:7,price: 9000,children:[{room:'A栋',price:2000},{room:'B栋',price:3000},{room:'C栋',price:4000}]},
-          {month:8,price: 6000,children:[{room:'A栋',price:3000},{room:'B栋',price:2000},{room:'C栋',price:1000}]},
-        ]
+        this.$router.push({path:'/statistics/year',query: { year: this.year }})
       },
-      monthsByRooms(){
-        return [
-          {room: 'A栋',price:30000,children:[{month:6,price:10000},{month:7,price:10000},{month:8,price:10000}]},
-          {room: 'B栋',price:30000,children:[{month:6,price:10000},{month:7,price:10000},{month:8,price:10000}]},
-          {room: 'C栋',price:30000,children:[{month:6,price:10000},{month:7,price:10000},{month:8,price:10000}]}
-        ]
+      fetchData(){
+        this.$http.get(`http://api.xcm168.com/api/bus/stat/revenue?type=house&year=${this.year}`).then(({data})=>{
+          this.homes = data
+          this.initData()
+        })
+        this.$http.get(`http://api.xcm168.com/api/bus/stat/revenue?type=calendar&year=${this.year}`).then(({data})=>{
+          this.months = data
+        })
+      },
+      initData(){
+        this.homes.forEach((h)=>{
+          h.children = h.months
+        })
+        this.months.forEach((m)=>{
+          m.children = m.houses
+        })
+        this.monthsByRooms = this.homes
+        this.roomsByMonths = this.months
+
       }
     }
   }
