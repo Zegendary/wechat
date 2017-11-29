@@ -10,13 +10,13 @@
       <li>
         <span>{{$route.query.month}}月</span>
         <span>全平台</span>
-        <span>{{$route.query.room}}</span>
+        <span>{{platforms[0].name}}</span>
         <span class="price">¥{{allPrice()}}</span>
       </li>
       <li v-for="item in platforms">
         <span>{{$route.query.month}}月</span>
         <span>{{item.plat}}</span>
-        <span>{{item.room}}</span>
+        <span>{{item.name}}</span>
         <span class="price">¥{{item.price}}</span>
       </li>
     </ul>
@@ -30,7 +30,7 @@
       }
     },
     created(){
-      this.$http.get('http://api.xcm168.com/api/bus/stat/revenue/channel',{year:this.$route.query.year}).then(({data})=>{
+      this.$http.get(`http://api.xcm168.com/api/bus/stat/revenue/channel?year=${this.$route.query.year}&month=${this.$route.query.month}&house_id=${this.$route.query.house_id}`).then(({data})=>{
         this.platforms = data
       })
     },
