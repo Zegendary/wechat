@@ -24,8 +24,8 @@
     data () {
       return {
         formData: {
-          email: 'aaaa@aa.com',
-          password: 'xcm@123987'
+          email: '',
+          password: ''
         },
         errorMessage: ''
       }
