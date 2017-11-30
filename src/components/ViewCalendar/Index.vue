@@ -6,8 +6,8 @@
         <span class="text">顾白白农家乐详情</span>
       </header>
       <div class="tabs">
-        <span @click="homeFirst = true" :class="{active: homeFirst}">根据别墅查看</span>
-        <span @click="homeFirst = false" :class="{active: !homeFirst}">根据日期查看</span>
+        <span @click="homeFirst = true" :class="{active: homeFirst}">根据日期查看</span>
+        <span @click="homeFirst = false" :class="{active: !homeFirst}">根据别墅查看</span>
       </div>
       <keep-alive>
         <rooms-by-months v-if="homeFirst" @pushRouter="pushRouter" :price="false" :rooms-by-months="roomsByMonths"></rooms-by-months>
@@ -42,11 +42,6 @@
         this.initData()
       })
     },
-    mounted() {
-      this.$nextTick(() => {
-        this.scroll = new BScroll(this.$refs.wrapper, {click: true})
-      })
-    },
     methods:{
       goBack(){
         this.$router.push({path:'/index'})
@@ -79,6 +74,7 @@
     width: 100vw;
     height: 100vh;
     background: $background;
+    overflow: auto;
     header{
       position: relative;
       padding: 12px;

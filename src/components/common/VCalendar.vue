@@ -53,7 +53,7 @@
       }
     },
     created(){
-      this.$http.get(`http://api.xcm168.com/api/house/calendar/${this.$route.query.id}?year=${this.year}&month=${this.month}`).then(({data})=>{
+      this.$http.get(`http://api.xcm168.com/api/bus/house/calendar/${this.$route.query.id}?year=${this.year}&month=${this.month}`).then(({data})=>{
         this.list = data[0].list
         this.prevMonthDays = getMonthweek(this.year,this.month)
       })

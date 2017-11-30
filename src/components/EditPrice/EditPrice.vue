@@ -77,6 +77,7 @@
         params.append('price',this.price)
         this.$http.post(`http://api.xcm168.com/api/bus/house/price/${this.$route.query.id}`,params).then((response)=>{
           this.$message.success('提交成功')
+          location.reload()
         })
       },
       cancelPrice(){

@@ -80,6 +80,8 @@
           day: `${this.selectedDates[0].year}-${this.selectedDates[0].month}-${this.selectedDates[0].date.day}`,
           note: this.channel,
           price: this.price
+        }).then(()=>{
+          location.reload()
         })
       }
     }

@@ -13,8 +13,8 @@
         </div>
       </header>
       <div class="tabs">
-        <span @click="homeFirst = true" :class="{active: homeFirst}">根据别墅查看</span>
-        <span @click="homeFirst = false" :class="{active: !homeFirst}">根据日期查看</span>
+        <span @click="homeFirst = true" :class="{active: homeFirst}">根据日期查看</span>
+        <span @click="homeFirst = false" :class="{active: !homeFirst}">根据别墅查看</span>
       </div>
       <rooms-by-months v-if="homeFirst" @pushRouter="pushRouter" :price="true" :rooms-by-months="roomsByMonths"></rooms-by-months>
       <months-by-rooms v-if="!homeFirst" @pushRouter="pushRouter" :price="true" :months-by-rooms="monthsByRooms"></months-by-rooms>
