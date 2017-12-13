@@ -45,11 +45,6 @@
     created(){
       this.fetchData()
     },
-    mounted() {
-      this.$nextTick(() => {
-        this.scroll = new BScroll(this.$refs.wrapper, {click: true})
-      })
-    },
     methods:{
       goBack(){
         this.$router.go(-1)
@@ -93,6 +88,7 @@
     width: 100vw;
     height: 100vh;
     background: $background;
+    overflow: auto;
     header {
       position: relative;
       padding: 8px 12px;
