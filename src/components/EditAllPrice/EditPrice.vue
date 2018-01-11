@@ -38,6 +38,11 @@
         year: mydate.getFullYear()
       }
     },
+    created(){
+      this.$http.get(`http://api.xcm168.com/api/bus/house/weekPrice/${this.$route.query.homeId}`).then(({data})=>{
+        this.weekPrices = data.data
+      })
+    },
     methods:{
       savePrice(){
         let params = new URLSearchParams()
