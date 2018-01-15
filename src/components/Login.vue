@@ -13,7 +13,7 @@
         </div>
         <div class="actions">
           <el-button @click="signIn" class="submit" type="primary">登录</el-button>
-          <span class="errorMessage">{{errorMessage}}</span>
+          <el-button @click="wechatSignIn" v-if="$route.query.first_login != 1" class="submit" type="success">微信登录</el-button>
         </div>
       </form>
     </div>
@@ -25,20 +25,20 @@
       return {
         formData: {
           email: '',
-          password: ''
+          password: '',
+          openid: this.$route.query.openid
         },
         errorMessage: ''
       }
     },
     created(){
-      if()
-      if(!this.$route.query.token){
-        location.href = `http://api.xcm168.com/wechat/oauth?callback_url=${encodeURIComponent(document.location.href)}`
-      }else{
-        if(this.$route.query.first_login === 0){
-          let token = this.$route.query.token
-          this.linkToIndex(token)
-        }
+      console.log(this.$route.query)
+      console.log(document.location)
+      if(this.$route.query.first_login == 0){
+        let token = this.$route.query.token
+        this.linkToIndex(token)
+      }else if(this.$route.query.first_login == 1){
+        this.$message('首次微信登陆需要绑定账号');
       }
     },
     methods: {
@@ -50,6 +50,9 @@
           this.$message.error('账号或密码不正确');
         })
       },
+      wechatSignIn(){
+        location.href = `http://api.xcm168.com/wechat/bus/oauth?callback_url=${encodeURIComponent(document.location.origin+'/#/login')}`
+      },
       linkToIndex(token){
         this.$http.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         sessionStorage.setItem("token",token)
@@ -58,7 +61,7 @@
     }
   }
 </script>
-<style lang="scss" scoped>
+<style lang="scss" type="text/scss" scoped>
   @import "../common/css/mixin.scss";
 
   .title{
@@ -86,6 +89,8 @@
     .actions{
       margin-top: 32px;
       width: 100%;
+      display: flex;
+      justify-content: space-between;
       .submit{
         width: 100%;
       }
