@@ -32,8 +32,6 @@
       }
     },
     created(){
-      console.log(this.$route.query)
-      console.log(document.location)
       if(this.$route.query.first_login == 0){
         let token = this.$route.query.token
         this.linkToIndex(token)
