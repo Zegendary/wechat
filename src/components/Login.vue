@@ -30,15 +30,30 @@
         errorMessage: ''
       }
     },
+    created(){
+      if()
+      if(!this.$route.query.token){
+        location.href = `http://api.xcm168.com/wechat/oauth?callback_url=${encodeURIComponent(document.location.href)}`
+      }else{
+        if(this.$route.query.first_login === 0){
+          let token = this.$route.query.token
+          this.linkToIndex(token)
+        }
+      }
+    },
     methods: {
       signIn(){
         this.$http.post('http://api.xcm168.com/api/bus/auth',this.formData).then(({data})=>{
-          this.$http.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-          sessionStorage.setItem("token",data.token)
-          this.$router.push({path: '/Index'})
+          let token = data.token
+          this.linkToIndex(token)
         },(error)=>{
           this.$message.error('账号或密码不正确');
         })
+      },
+      linkToIndex(token){
+        this.$http.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        sessionStorage.setItem("token",token)
+        this.$router.push({path: '/Index'})
       }
     }
   }
